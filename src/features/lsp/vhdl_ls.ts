@@ -1,15 +1,14 @@
 // general imports
 'use strict';
-import Octokit = require('@octokit/rest');
+import { Octokit } from '@octokit/rest';
 import util = require('util');
 import fetch from 'node-fetch';
-import extract = require('extract-zip');
+import extract from 'extract-zip';
 import * as fs from 'fs-extra';
 import * as vscode from 'vscode';
 import semver = require('semver');
 import * as path from 'path';
 import * as lockfile from 'proper-lockfile';
-import AbortController from 'abort-controller';
 import { Readable } from 'stream';
 
 import {
@@ -55,7 +54,7 @@ export class VHDL_LS {
     //Private Members
     //--------------------------------------------
     private client!: LanguageClient;
-    private languageServerDisposable! : vscode.Disposable;
+    private languageServerDisposable!: vscode.Disposable;
     private context: vscode.ExtensionContext;
 
     //--------------------------------------------
@@ -84,8 +83,7 @@ export class VHDL_LS {
             output.appendLine('Found version ' + languageServerVersion);
         }
 
-        if (!languageServerName)
-        {
+        if (!languageServerName) {
             vscode.window.showErrorMessage(`architecture "${process.platform}" not supported!`);
             return;
         }
@@ -98,25 +96,25 @@ export class VHDL_LS {
             'bin',
             languageServerBinaryName + (isWindows ? '.exe' : '')
         );
-    
+
         // Get language server configuration and command to start server
-    
+
         let languageServerBinary = vscode.workspace
             .getConfiguration()
             .get('vhdl-by-hgb.vhdlls.languageServer');
         let lsBinary = languageServerBinary as keyof typeof LanguageServerBinary;
-        let serverOptions : ServerOptions | undefined;
+        let serverOptions: ServerOptions | undefined;
         switch (lsBinary) {
             case 'embedded':
                 serverOptions = getServerOptionsEmbedded(this.context);
                 output.appendLine('Using embedded language server');
                 break;
-    
+
             case 'user':
                 serverOptions = getServerOptionsUser(this.context);
                 output.appendLine('Using user specified language server');
                 break;
-    
+
             case 'systemPath':
                 serverOptions = getServerOptionsSystemPath();
                 output.appendLine('Running language server from path');
@@ -126,7 +124,7 @@ export class VHDL_LS {
                 serverOptions = await getServerOptionsDocker();
                 output.appendLine('Using vhdl_ls from Docker Hub');
                 break;
-    
+
             default:
                 serverOptions = getServerOptionsEmbedded(this.context);
                 output.appendLine('Using embedded language server (default)');
@@ -135,8 +133,8 @@ export class VHDL_LS {
 
         // check for custom-libraries-path
         let librariesLocation = vscode.workspace
-        .getConfiguration()
-        .get('vhdl-by-hgb.vhdlls.standardLibraries');
+            .getConfiguration()
+            .get('vhdl-by-hgb.vhdlls.standardLibraries');
         // set custom-libraries-path
         if (lsBinary !== 'docker' && librariesLocation && serverOptions) {
             const args = ['--libraries', librariesLocation as string];
@@ -147,7 +145,7 @@ export class VHDL_LS {
             serverOptions.run.args = args;
             serverOptions.debug.args = args;
         }
-    
+
         // Options to control the language client
         let clientOptions: LanguageClientOptions = {
             documentSelector: [{ scheme: 'file', language: 'vhdl' }],
@@ -164,7 +162,7 @@ export class VHDL_LS {
                 ),
             };
         }
-    
+
         // Create the language client
         this.client = new LanguageClient(
             'vhdlls',
@@ -172,13 +170,13 @@ export class VHDL_LS {
             serverOptions!,
             clientOptions
         );
-    
+
         // Start the client. This will also launch the server
         this.languageServerDisposable = this.client.start();
-    
+
         // Register command to restart language server
         this.context.subscriptions.push(this.languageServerDisposable);
-    
+
         output.appendLine('Checking for updates...');
         lockfile
             .lock(this.context.asAbsolutePath('server'), {
@@ -194,13 +192,12 @@ export class VHDL_LS {
                         return release();
                     });
             });
-    
+
         output.appendLine('Language server started');
-    
+
     }
 
-    public async Restart() : Promise<void>
-    {
+    public async Restart(): Promise<void> {
         const MSG = 'Restarting VHDL LS';
         output.appendLine(MSG);
         vscode.window.showInformationMessage(MSG);
@@ -210,8 +207,7 @@ export class VHDL_LS {
         this.context.subscriptions.push(this.languageServerDisposable);
     }
 
-    public Deactivate() : Thenable<void> | undefined
-    {
+    public Deactivate(): Thenable<void> | undefined {
         if (!this.client) {
             return undefined;
         }
@@ -221,9 +217,8 @@ export class VHDL_LS {
     //--------------------------------------------
     //Private Methods
     //--------------------------------------------
-    private RegisterCommands() : void
-    {
-        let disposable : vscode.Disposable;
+    private RegisterCommands(): void {
+        let disposable: vscode.Disposable;
 
         disposable = vscode.commands.registerCommand('VHDLbyHGB.vhdlls.activate', () => this.Activate());
         this.context.subscriptions.push(disposable);
@@ -261,7 +256,7 @@ function embeddedVersion(languageServerDir: string): string {
     }
 }
 
-async function getServerOptionsDocker() : Promise<ServerOptions | undefined> {
+async function getServerOptionsDocker(): Promise<ServerOptions | undefined> {
     const image = 'kraigher/vhdl_ls:latest';
     let pullCmd = 'docker pull ' + image;
     output.appendLine(`Pulling '${image}'`);
@@ -270,8 +265,8 @@ async function getServerOptionsDocker() : Promise<ServerOptions | undefined> {
     output.append(stdout);
     output.append(stderr);
 
-    let wsPath : string;
-    if(vscode.workspace.workspaceFolders) {
+    let wsPath: string;
+    if (vscode.workspace.workspaceFolders) {
         wsPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
     }
     else {
@@ -331,7 +326,7 @@ function getServerOptionsUser(context: vscode.ExtensionContext) {
     let serverCommand: string = vscode.workspace
         .getConfiguration()
         .get('vhdl-by-hgb.vhdlls.languageServerUserPath')!;
-    
+
     let serverOptions: ServerOptions = {
         run: {
             command: serverCommand,
@@ -410,7 +405,7 @@ async function getLatestLanguageServer(
             abortController.abort();
         }, timeoutMs);
         let download = await fetch(browser_download_url, {
-            signal: abortController.signal,
+            signal: abortController.signal as Parameters<typeof fetch>[1] extends { signal?: infer S } ? S : never,
         }).catch((err) => {
             output.appendLine(err);
             throw new Error(
