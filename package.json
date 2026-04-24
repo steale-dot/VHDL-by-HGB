@@ -563,12 +563,13 @@
                     "default": "regression.py"
                 },
                 "vhdl-by-hgb.formatter": {
-                    "description": "(Format your code either with VHDLFormatter(default) or Emacs-VHDL-Mode(must be installed already!)",
+                    "description": "Format your code with VHDLFormatter (default), Emacs-VHDL-Mode (must be installed), or vsg (must be installed via pip install vsg).",
                     "type": "string",
                     "default": "vhdl_formatter",
                     "enum": [
                         "vhdl_formatter",
-                        "emacs_vhdl_formatter"
+                        "emacs_vhdl_formatter",
+                        "vsg"
                     ]
                 },
                 "vhdl-by-hgb.vhdl-formatter.insertFinalNewline": {
@@ -728,6 +729,21 @@
                     "type": "string",
                     "default": "(vhdl-set-style \"IEEE\")",
                     "markdownDescription": "Custom elisp code which gets executed before the document is formatted"
+                },
+                "vhdl-by-hgb.vsg.executable": {
+                    "type": "string",
+                    "default": "vsg",
+                    "markdownDescription": "Path to the `vsg` executable. Defaults to `vsg` (must be on PATH). Install with `pip install vsg`."
+                },
+                "vhdl-by-hgb.vsg.configFile": {
+                    "type": "string",
+                    "default": "",
+                    "markdownDescription": "Path to a VSG YAML configuration file passed via `--configuration`. Leave empty to use VSG defaults."
+                },
+                "vhdl-by-hgb.vsg.linting.enable": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable VSG linting diagnostics in the Problems panel."
                 }
             }
         },

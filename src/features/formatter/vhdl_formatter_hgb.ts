@@ -7,6 +7,7 @@ import * as vscode from 'vscode';
 // specific imports
 import { EmacsVHDLFormatterDocumentFormattingEditProvider } from './emacs_vhdl_formatter/emacs_vhdl_formatter';
 import { VHDLFormatterDocumentFormattingEditProvider } from './vhdl_formatter/vhdl_formatter';
+import { VsgFormatterDocumentFormattingEditProvider } from './vsg/vsg_formatter';
 
 export class VHDLFormatterHGB
 {
@@ -43,26 +44,21 @@ export class VHDLFormatterHGB
 
 enum eFormatter {
     vhdl_formatter,
-	emacs_vhdl_formatter
+	emacs_vhdl_formatter,
+	vsg
 }
 
 export class VhdlbyHgbDocumentFormattingEditProvider implements vscode.DocumentFormattingEditProvider
 {
-    // --------------------------------------------
-    // Private members
-    // --------------------------------------------
-
-    // formatters
     private mVHDLFormatter : VHDLFormatterDocumentFormattingEditProvider;
     private mEmacsVHDLFormatter : EmacsVHDLFormatterDocumentFormattingEditProvider;
+    private mVsgFormatter : VsgFormatterDocumentFormattingEditProvider;
 
-    // --------------------------------------------
-    // Public methods
-    // --------------------------------------------
     public constructor() 
     {
         this.mVHDLFormatter = new VHDLFormatterDocumentFormattingEditProvider();
         this.mEmacsVHDLFormatter = new EmacsVHDLFormatterDocumentFormattingEditProvider();
+        this.mVsgFormatter = new VsgFormatterDocumentFormattingEditProvider();
     }
 
     public async provideDocumentFormattingEdits(
@@ -86,6 +82,10 @@ export class VhdlbyHgbDocumentFormattingEditProvider implements vscode.DocumentF
 
             case "emacs_vhdl_formatter":
                 textEdit = await this.mEmacsVHDLFormatter.provideDocumentFormattingEdits(document, options, token);
+                break;
+
+            case "vsg":
+                textEdit = await this.mVsgFormatter.provideDocumentFormattingEdits(document, options, token);
                 break;
 
             default:
