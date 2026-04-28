@@ -5,7 +5,7 @@
     "description": "VS-Code Extension for VHDL",
     "version": "1.0.2",
     "engines": {
-        "vscode": "^1.45.0"
+        "vscode": "^1.116.0"
     },
     "keywords": [
         "VHDL",
