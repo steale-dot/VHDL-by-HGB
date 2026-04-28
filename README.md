@@ -1,3 +1,6 @@
+> [!WARNING]
+> I do not intend to maintain this any further then my personal usage.
+
 # VHDLbyHGB
 
 VHDLbyHGB is a Visual Studio Code extension for editing VHDL-Projects.
