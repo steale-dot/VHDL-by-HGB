@@ -54,7 +54,6 @@ export class VHDL_LS {
     //Private Members
     //--------------------------------------------
     private client!: LanguageClient;
-    private languageServerDisposable!: vscode.Disposable;
     private context: vscode.ExtensionContext;
 
     //--------------------------------------------
@@ -172,10 +171,10 @@ export class VHDL_LS {
         );
 
         // Start the client. This will also launch the server
-        this.languageServerDisposable = this.client.start();
+        await this.client.start();
 
-        // Register command to restart language server
-        this.context.subscriptions.push(this.languageServerDisposable);
+        // Register the client itself as disposable
+        this.context.subscriptions.push(this.client);
 
         output.appendLine('Checking for updates...');
         lockfile
@@ -201,10 +200,7 @@ export class VHDL_LS {
         const MSG = 'Restarting VHDL LS';
         output.appendLine(MSG);
         vscode.window.showInformationMessage(MSG);
-        await this.client.stop();
-        this.languageServerDisposable.dispose();
-        this.languageServerDisposable = this.client.start();
-        this.context.subscriptions.push(this.languageServerDisposable);
+        await this.client.restart();
     }
 
     public Deactivate(): Thenable<void> | undefined {

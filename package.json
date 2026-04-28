@@ -801,8 +801,8 @@
         "@types/mocha": "^10.0.10",
         "@types/node": "^25.6.0",
         "@types/vscode": "^1.116.0",
-        "@typescript-eslint/eslint-plugin": "^8.59.0",
-        "@typescript-eslint/parser": "^8.59.0",
+        "@typescript-eslint/eslint-plugin": "^8.59.1",
+        "@typescript-eslint/parser": "^8.59.1",
         "@vscode/test-cli": "^0.0.12",
         "@vscode/test-electron": "^2.5.2",
         "@vscode/vsce": "^3.9",
@@ -811,10 +811,14 @@
         "glob": "^13.0.6",
         "js-yaml": "^4.1.1",
         "mocha": "^11.7.5",
-        "npx": "^10.2.2",
         "ovsx": "^0.10.11",
         "shx": "^0.4.0",
         "typescript": "6.0.3",
-        "vscode-languageclient": "7.0.0-next.6"
+        "vscode-languageclient": "9.0.1"
+    },
+    "overrides": {
+        "diff": "^9.0.0",
+        "serialize-javascript": "^7.0.5",
+        "uuid": "^14.0.0"
     }
 }
