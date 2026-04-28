@@ -2,14 +2,16 @@
 'use strict';
 import { Octokit } from '@octokit/rest';
 import util = require('util');
-import fetch from 'node-fetch';
 import extract from 'extract-zip';
 import * as fs from 'fs-extra';
 import * as vscode from 'vscode';
 import semver = require('semver');
 import * as path from 'path';
 import * as lockfile from 'proper-lockfile';
-import { Readable } from 'stream';
+import { Readable, pipeline } from 'stream';
+import { promisify } from 'util';
+
+const pipelineAsync = promisify(pipeline);
 
 import {
     LanguageClient,
@@ -403,7 +405,7 @@ async function getLatestLanguageServer(
             abortController.abort();
         }, timeoutMs);
         let download = await fetch(browser_download_url, {
-            signal: abortController.signal as Parameters<typeof fetch>[1] extends { signal?: infer S } ? S : never,
+            signal: abortController.signal,
         }).catch((err) => {
             output.appendLine(err);
             throw new Error(
@@ -429,15 +431,19 @@ async function getLatestLanguageServer(
             const dest = fs.createWriteStream(languageServerAsset, {
                 autoClose: true,
             });
-            download.body.pipe(dest);
-            dest.on('finish', () => {
-                output.appendLine('Server download complete');
-                resolve();
-            });
-            dest.on('error', (err: any) => {
-                output.appendLine('Server download error');
-                reject(err);
-            });
+            if (!download.body) {
+                return reject(new Error('Response body is null'));
+            }
+            const nodeStream = Readable.fromWeb(download.body as Parameters<typeof Readable.fromWeb>[0]);
+            pipelineAsync(nodeStream, dest)
+                .then(() => {
+                    output.appendLine('Server download complete');
+                    resolve();
+                })
+                .catch((err: any) => {
+                    output.appendLine('Server download error');
+                    reject(err);
+                });
         });
 
         await new Promise<void>((resolve, reject) => {

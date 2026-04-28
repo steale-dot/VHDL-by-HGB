@@ -518,9 +518,9 @@
                     "default": "analyze"
                 },
                 "vhdl-by-hgb.vhdlls.standardLibraries": {
-					"type": "string",
-					"description": "Defines the path where the VHDL standard libraries (ieee, std, ...) are located. If omitted, will search in pre-defined standard paths for these libraries"
-				},
+                    "type": "string",
+                    "description": "Defines the path where the VHDL standard libraries (ieee, std, ...) are located. If omitted, will search in pre-defined standard paths for these libraries"
+                },
                 "vhdl-by-hgb.vhdlls.toml.generation": {
                     "description": "Generation-Option for vhdl_ls.toml, which is needed for the Language Server\n",
                     "type": "string",
@@ -537,12 +537,27 @@
                 "vhdl-by-hgb.vhdlls.toml.auto.exclude": {
                     "description": "file-extensions to exclude from an auto-generated vhdl_ls.toml-file",
                     "type": "array",
-                    "default": [".v", ".vh", ".sv", ".svh"]
+                    "default": [
+                        ".v",
+                        ".vh",
+                        ".sv",
+                        ".svh"
+                    ]
                 },
                 "vhdl-by-hgb.vhdlls.toml.auto.third-party-libraries": {
                     "description": "libraries to be marked as third-party in an auto-generated vhdl_ls.toml-file",
                     "type": "array",
-                    "default": ["bitvis", "hdl-modules", "neorv", "olo", "osvvm", "PoC", "surf", "uvvm", "vunit_lib"]
+                    "default": [
+                        "bitvis",
+                        "hdl-modules",
+                        "neorv",
+                        "olo",
+                        "osvvm",
+                        "PoC",
+                        "surf",
+                        "uvvm",
+                        "vunit_lib"
+                    ]
                 },
                 "vhdl-by-hgb.python": {
                     "title": "Python executable",
@@ -773,9 +788,7 @@
         "@iarna/toml": "^2.2.5",
         "@octokit/rest": "22.0.1",
         "@redhat-developer/vscode-wizard": "^0.3.1",
-        "@types/node-fetch": "2.6.13",
         "@types/semver": "7.7.1",
-        "abort-controller": "3.0.0",
         "extract-zip": "^2.0.1",
         "fast-xml-parser": "^5.7.2",
         "fs-extra": "11.3.4",
